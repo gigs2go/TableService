@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<data xmlns:o="http://www.ensignos.com/data" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ensignos.com/data ../../main/webapp/schemas/data.xsd ">
+    <schemaName>SchemaName</schemaName>
+    <rows>
+        <row>
+            <columnvalue>
+                <name>String</name>
+                <value>String value</value>
+            </columnvalue>
+            <columnvalue>
+                <name>Decimal</name>
+                <value>1.23</value>
+            </columnvalue>
+        </row>
+    </rows>
+</data>

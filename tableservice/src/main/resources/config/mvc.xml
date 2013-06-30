@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task" xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:webflow="http://www.springframework.org/schema/webflow-config"
+	xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.4.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd
+">
+
+
+	<context:component-scan base-package="net.gigs2go.tableserver.core" />
+
+	<!-- Handles HTTP GET requests for static data -->
+	<resources mapping="/resources/**" location="/resources/" />
+	<resources mapping="/schema/**" location="/schema/" />
+
+	<!-- Application Message Bundle -->
+	<beans:bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<beans:property name="basename" value="classpath:messages/messages" />
+		<beans:property name="defaultEncoding" value="UTF-8" />
+		<beans:property name="cacheSeconds" value="0" />
+	</beans:bean>
+
+	<!-- Configures Handler Interceptors -->
+	<interceptors>
+		<!-- Changes the locale when a 'locale' request parameter is sent; e.g. 
+			/?locale=de -->
+		<beans:bean
+			class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+			<beans:property name="paramName" value="lang" />
+		</beans:bean>
+	</interceptors>
+
+	<!-- Saves a locale change using a cookie -->
+	<beans:bean id="localeResolver"
+		class="org.springframework.web.servlet.i18n.CookieLocaleResolver" />
+
+	<!-- - The ContentNegotiatingViewResolver delegates to the InternalResourceViewResolver 
+		and BeanNameViewResolver, - and uses the requested media type (determined 
+		by the path extension) to pick a matching view. - When the media type is 
+		'text/html', it will delegate to the InternalResourceViewResolver's JstlView, 
+		- otherwise to the BeanNameViewResolver. -->
+	<beans:bean id="contentNegotiationViewResolver"
+		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<beans:property name="contentNegotiationManager" ref="cnManager" />
+
+		<beans:property name="viewResolvers">
+			<beans:list>
+				<!-- Default viewClass: JSTL view (JSP with html output) -->
+				<beans:bean
+					class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+					<!-- Example: a logical view name of 'artists' is mapped to '/WEB-INF/views/artists.jsp' -->
+					<beans:property name="prefix" value="/WEB-INF/views/" />
+					<beans:property name="suffix" value=".jsp" />
+				</beans:bean>
+
+				<!-- Used here for 'xml' and 'json' views -->
+				<beans:bean
+					class="org.springframework.web.servlet.view.BeanNameViewResolver" />
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+
+	<!-- Simple strategy: only path extension is taken into account -->
+	<beans:bean id="cnManager"
+		class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+		<beans:property name="favorPathExtension" value="true" />
+		<beans:property name="ignoreAcceptHeader" value="true" />
+		<beans:property name="defaultContentType" value="text/html" />
+
+		<beans:property name="mediaTypes">
+			<beans:map>
+				<beans:entry key="json" value="application/json" />
+				<beans:entry key="xml" value="application/xml" />
+			</beans:map>
+		</beans:property>
+	</beans:bean>
+
+	<beans:bean class="net.gigs2go.tableserver.core.mvc.filters.JsonpCallbackFilter"
+		id="jsonpCallbackFilter" />
+
+	<!-- Needed because we install custom converters and formatters -->
+	<annotation-driven conversion-service="conversionService" />
+	<beans:bean id="conversionService"
+		class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+		<beans:property name="registerDefaultFormatters" value="false" />
+		<beans:property name="formatters">
+			<beans:set>
+				<beans:bean
+					class="org.springframework.format.number.NumberFormatAnnotationFormatterFactory" />
+			</beans:set>
+		</beans:property>
+		<beans:property name="formatterRegistrars">
+			<beans:set>
+				<beans:bean
+					class="org.springframework.format.datetime.joda.JodaTimeFormatterRegistrar">
+					<beans:property name="dateFormatter">
+						<beans:bean
+							class="org.springframework.format.datetime.joda.DateTimeFormatterFactoryBean">
+							<beans:property name="pattern" value="yyyy-MM-dd" />
+						</beans:bean>
+					</beans:property>
+					<beans:property name="timeFormatter">
+						<beans:bean
+							class="org.springframework.format.datetime.joda.DateTimeFormatterFactoryBean">
+							<beans:property name="pattern" value="hh:mm:ss" />
+						</beans:bean>
+					</beans:property>
+				</beans:bean>
+			</beans:set>
+		</beans:property>
+	</beans:bean>
+
+	<!-- Multipart file resolution -->
+	<beans:bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+
+		<!-- maximum file size in bytes -->
+		<beans:property name="maxUploadSize" value="20848820" />
+	</beans:bean>
+
+	<annotation-driven />
+
+	<!-- Maps '/' requests to the 'index' view -->
+	<view-controller path="/" view-name="index" />
+
+	<!-- Configure Data access beans -->
+	<beans:bean class="net.gigs2go.tableserver.core.data.DataServiceFactory">
+		<beans:property name="storageServices">
+			<beans:map>
+				<beans:entry>
+					<beans:key>
+						<beans:value>mongo</beans:value>
+					</beans:key>
+					<beans:bean
+						class="net.gigs2go.tableserver.core.services.storage.MongoStorageDataServiceImpl" />
+				</beans:entry>
+			</beans:map>
+		</beans:property>
+		<beans:property name="transferServices">
+			<beans:map>
+				<beans:entry>
+					<beans:key>
+						<beans:value>xml</beans:value>
+					</beans:key>
+					<beans:bean
+						class="net.gigs2go.tableserver.core.services.transfer.XMLTransferDataServiceImpl" />
+				</beans:entry>
+			</beans:map>
+		</beans:property>
+	</beans:bean>
+
+
+	<!-- Installs a listener to apply Spring Security authorities -->
+	<beans:bean id="securityFlowExecutionListener"
+		class="org.springframework.webflow.security.SecurityFlowExecutionListener" />
+
+</beans:beans>
+	

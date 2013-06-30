@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ensignos.com/schema ../../main/webapp/schemas/schema.xsd">
+		<name>SchemaName</name>
+		<version>99.0.9</version>
+		<creationDate>2013-06-15</creationDate>
+		<columns>
+			<column>
+				<dataType>STRING</dataType>
+				<type>DIMENSION</type>
+				<name>String</name>
+			</column>
+		</columns>
+</schema>
+

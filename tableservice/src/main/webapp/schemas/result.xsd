@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0">
+
+    <xs:element name="result">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="success" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="schemaref" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                <xs:element maxOccurs="unbounded" name="messages" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

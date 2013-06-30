@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<data>
+	<schema>
+		<column>
+			<type>STRING</type>
+			<name>String</name>
+		</column>
+		<column>
+			<type>EMAIL</type>
+			<name>Email</name>
+		</column>
+		<column>
+			<type>URL</type>
+			<name>Url</name>
+		</column>
+		<column>
+			<type>INTEGER</type>
+			<name>Integer</name>
+		</column>
+		<column>
+			<type>CURRENCY</type>
+			<name>Currency</name>
+		</column>
+		<column>
+			<type>PERCENT</type>
+			<name>Percent</name>
+		</column>
+		<column>
+			<type>DATE</type>
+			<name>Date</name>
+		</column>
+		<column>
+			<type>DATETIME</type>
+			<name>DateTime</name>
+		</column>
+		<column>
+			<type>TIMESTAMP</type>
+			<name>TimeStamp</name>
+		</column>
+		<column>
+			<type>BOOLEAN</type>
+			<name>Boolean</name>
+		</column>
+		<column>
+			<type>VERSION</type>
+			<name>Version</name>
+		</column>
+		<column>
+			<type>DECIMAL</type>
+			<name>Decimal</name>
+		</column>
+		<column>
+			<type>DOUBLE</type>
+			<name>Double</name>
+		</column>
+	</schema>
+	<data>
+		<row>
+			<value>String value</value>
+			<value>email@value</value>
+			<value>http://www.url.value.com</value>
+			<value>97</value>
+			<value>GBP 35.2</value>
+			<value>17.5%</value>
+			<value>17-06-2013</value>
+			<value>17-06-2013 16:00:00</value>
+			<value>12345678909876</value>
+			<value>true</value>
+			<value>Version string</value>
+			<value>123456.23456</value>
+			<value>123456.23456</value>
+		</row>
+	</data>
+</data>
