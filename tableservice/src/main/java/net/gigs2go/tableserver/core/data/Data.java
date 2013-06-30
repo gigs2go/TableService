@@ -31,7 +31,7 @@ public class Data {
     }
 
     /**
-     * @param schemaRef the schemaName to set
+     * @param schemaName the schemaName to set
      */
     public void setSchemaName(String schemaName) {
         this.schemaName = schemaName;
