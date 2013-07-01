@@ -2,3 +2,8 @@
 /Users
 /test-output
 /dhtmlx_touch
+target
+.settings/*
+!.settings/.jsdtscope
+.project
+.classpath
