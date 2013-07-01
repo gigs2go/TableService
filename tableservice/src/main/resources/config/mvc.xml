@@ -18,7 +18,8 @@
 
 	<!-- Handles HTTP GET requests for static data -->
 	<resources mapping="/resources/**" location="/resources/" />
-	<resources mapping="/schema/**" location="/schema/" />
+	<resources mapping="/schemas/**" location="/schemas/" />
+    <resources mapping="/apidocs/**" location="/apidocs/" />
 
 	<!-- Application Message Bundle -->
 	<beans:bean id="messageSource"
