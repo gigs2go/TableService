@@ -26,6 +26,6 @@
 
 	<bean class="org.springframework.data.mongodb.core.MongoExceptionTranslator" />
 
-	<context:component-scan base-package="net.gigs2go.tableserver.core" />
+	<context:component-scan base-package="uk.org.gigs2go.tableserver.core" />
 
 </beans>

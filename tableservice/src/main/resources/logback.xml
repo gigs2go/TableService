@@ -19,7 +19,7 @@
   <logger name="org.springframework.security" level="DEBUG"/>
   <logger name="org.springframework.webflow" level="DEBUG"/>
   <logger name="org.hibernate" level="INFO"/>
-  <logger name="net.gigs2go.tableserver.core" level="DEBUG"/>
+  <logger name="uk.org.gigs2go.tableserver.core" level="DEBUG"/>
   <logger name="org.springframework.data" level="INFO"/>
   <logger name="org.springframework.data.mongodb" level="DEBUG"/>
   <logger name="org.springframework.data.mongodb.crossstore" level="TRACE"/>

@@ -17,7 +17,7 @@
   <logger name="o.s" level="INFO"/>
   <logger name="org.springframework" level="INFO"/>
   <logger name="org.hibernate" level="INFO"/>
-  <logger name="net.gigs2go.tableserver.core" level="DEBUG"/>
+  <logger name="uk.org.gigs2go.tableserver.core" level="DEBUG"/>
   <logger name="org.springframework.data" level="INFO"/>
   <logger name="org.springframework.data.mongodb" level="DEBUG"/>
   <root level="ERROR">

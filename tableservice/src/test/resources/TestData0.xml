@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<data  xmlns:o="http://www.ensignos.com/data" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ensignos.com/data ../../main/webapp/schemas/data.xsd ">
+<table  xmlns:o="http://www.ensignos.com/table" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ensignos.com/table ../../main/webapp/schemas/table.xsd ">
 	<schemaName>SchemaName</schemaName>
 	<name>FileName</name>
 		<rows>
@@ -14,4 +14,4 @@
 				</columnvalue>
 			</row>
 		</rows>
-</data>
+</table>

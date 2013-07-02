@@ -14,7 +14,7 @@
 ">
 
 
-	<context:component-scan base-package="net.gigs2go.tableserver.core" />
+	<context:component-scan base-package="uk.org.gigs2go.tableserver.core" />
 
 	<!-- Handles HTTP GET requests for static data -->
 	<resources mapping="/resources/**" location="/resources/" />
@@ -84,7 +84,7 @@
 		</beans:property>
 	</beans:bean>
 
-	<beans:bean class="net.gigs2go.tableserver.core.mvc.filters.JsonpCallbackFilter"
+	<beans:bean class="uk.org.gigs2go.tableserver.core.mvc.filters.JsonpCallbackFilter"
 		id="jsonpCallbackFilter" />
 
 	<!-- Needed because we install custom converters and formatters -->
@@ -133,7 +133,7 @@
 	<view-controller path="/" view-name="index" />
 
 	<!-- Configure Data access beans -->
-	<beans:bean class="net.gigs2go.tableserver.core.data.DataServiceFactory">
+	<beans:bean class="uk.org.gigs2go.tableserver.core.data.DataServiceFactory">
 		<beans:property name="storageServices">
 			<beans:map>
 				<beans:entry>
@@ -141,7 +141,7 @@
 						<beans:value>mongo</beans:value>
 					</beans:key>
 					<beans:bean
-						class="net.gigs2go.tableserver.core.services.storage.MongoStorageDataServiceImpl" />
+						class="uk.org.gigs2go.tableserver.core.services.storage.MongoStorageDataServiceImpl" />
 				</beans:entry>
 			</beans:map>
 		</beans:property>
@@ -152,7 +152,7 @@
 						<beans:value>xml</beans:value>
 					</beans:key>
 					<beans:bean
-						class="net.gigs2go.tableserver.core.services.transfer.XMLTransferDataServiceImpl" />
+						class="uk.org.gigs2go.tableserver.core.services.transfer.XMLTransferDataServiceImpl" />
 				</beans:entry>
 			</beans:map>
 		</beans:property>
