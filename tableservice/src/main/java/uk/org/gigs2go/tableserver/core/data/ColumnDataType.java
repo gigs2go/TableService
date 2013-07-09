@@ -12,40 +12,16 @@ import java.math.BigDecimal;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
-
 import org.joda.money.Money;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.org.gigs2go.tableserver.core.data.ColumnType;
-
-
 /**
  * <p>Java class for ColumnDataType.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * <p>
- * <pre>
- * &lt;simpleType name="ColumnDataType">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="STRING"/>
- *     &lt;enumeration value="INTEGER"/>
- *     &lt;enumeration value="DECIMAL"/>
- *     &lt;enumeration value="DOUBLE"/>
- *     &lt;enumeration value="DATE"/>
- *     &lt;enumeration value="DATETIME"/>
- *     &lt;enumeration value="EMAIL"/>
- *     &lt;enumeration value="URL"/>
- *     &lt;enumeration value="CURRENCY"/>
- *     &lt;enumeration value="PERCENT"/>
- *     &lt;enumeration value="TIMESTAMP"/>
- *     &lt;enumeration value="BOOLEAN"/>
- *     &lt;enumeration value="VERSION"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
- * </pre>
  * 
  */
 @XmlType(name = "ColumnDataType")
@@ -99,6 +75,18 @@ public enum ColumnDataType {
             LocalDate result = null;
             try {
                 result = LocalDate.parse(value);
+            } catch (Exception e) {
+                log.warn("Unable to convert {} to {}", value, this.name());
+            }
+            return result;
+        }
+    },
+    YEAR {
+        @Override
+        public LocalDate convert(String value) {
+            LocalDate result = null;
+            try {
+                result = yearFormatter.parseLocalDate(value);
             } catch (Exception e) {
                 log.warn("Unable to convert {} to {}", value, this.name());
             }
@@ -167,6 +155,7 @@ public enum ColumnDataType {
         }
     };
     private static Logger log = LoggerFactory.getLogger(ColumnType.class);
+    private static final DateTimeFormatter yearFormatter = DateTimeFormat.forPattern("YYYY");
 
     public abstract Object convert(String value);
 

@@ -45,8 +45,8 @@ public class MongoStorageDataServiceTest extends AbstractJUnit4SpringContextTest
     private TestUtils testUtils;
 
     @Test
-    public void testStoreSchema() {
-        InputStream inputStream = testUtils.getInputStream("TestSchema.xml");
+    public void testStoreSchema0() {
+        InputStream inputStream = testUtils.getInputStream("TestSchema0.xml");
         assertNotNull(inputStream);
         Schema schema = null;
         try {
@@ -67,7 +67,29 @@ public class MongoStorageDataServiceTest extends AbstractJUnit4SpringContextTest
     }
 
     @Test
-    public void testLoadSchema() {
+    public void testStoreSchema1() {
+        InputStream inputStream = testUtils.getInputStream("TestSchema1.xml");
+        assertNotNull(inputStream);
+        Schema schema = null;
+        try {
+            schema = (Schema) jaxbUtils.getObject(inputStream, SchemaType.SCHEMA);
+        } catch (TransferException e) {
+            fail("Exception thrown");
+        }
+        assertNotNull(schema);
+
+        StorageDataService storageDataService = factory.getStorageServices().get("mongo");
+        assertNotNull(storageDataService);
+        try {
+            storageDataService.addSchema(schema);
+        } catch (StorageException e) {
+            fail("Unexpected exception" + e.getResult().toString());
+        }
+
+    }
+
+    @Test
+    public void testLoadSchema0() {
         StorageDataService storageDataService = factory.getStorageServices().get("mongo");
         assertNotNull(storageDataService);
         Schema schema = null;
@@ -81,7 +103,21 @@ public class MongoStorageDataServiceTest extends AbstractJUnit4SpringContextTest
     }
 
     @Test
-    public void testStoreData() {
+    public void testLoadSchema1() {
+        StorageDataService storageDataService = factory.getStorageServices().get("mongo");
+        assertNotNull(storageDataService);
+        Schema schema = null;
+        try {
+            schema = storageDataService.loadSchema("SchemaOne");
+        } catch (StorageException e) {
+            fail("Unexpected exception" + e.getResult().toString());
+        }
+        assertNotNull(schema);
+
+    }
+
+    @Test
+    public void testStoreData0() {
         InputStream inputStream = testUtils.getInputStream("TestData0.xml");
         assertNotNull(inputStream);
         Table table = null;
@@ -97,6 +133,35 @@ public class MongoStorageDataServiceTest extends AbstractJUnit4SpringContextTest
         Schema schema = null;
         try {
             schema = storageDataService.loadSchema("SchemaName");
+        } catch (StorageException e) {
+            fail("Unexpected exception" + e.getResult().toString());
+        }
+        assertNotNull(schema);
+        try {
+            storageDataService.addData(schema, table);
+        } catch (StorageException e) {
+            fail("Unexpected exception" + e.getResult().toString());
+        }
+
+    }
+
+    @Test
+    public void testStoreData1() {
+        InputStream inputStream = testUtils.getInputStream("TestData1.xml");
+        assertNotNull(inputStream);
+        Table table = null;
+        try {
+            table = (Table) jaxbUtils.getObject(inputStream, SchemaType.TABLE);
+        } catch (TransferException e) {
+            fail("Exception thrown");
+        }
+        assertNotNull(table);
+
+        StorageDataService storageDataService = factory.getStorageServices().get("mongo");
+        assertNotNull(storageDataService);
+        Schema schema = null;
+        try {
+            schema = storageDataService.loadSchema(table.getSchemaName());
         } catch (StorageException e) {
             fail("Unexpected exception" + e.getResult().toString());
         }

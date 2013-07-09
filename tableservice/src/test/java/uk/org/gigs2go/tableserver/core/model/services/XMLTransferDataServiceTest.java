@@ -27,7 +27,6 @@ import uk.org.gigs2go.tableserver.core.data.TransferDataService;
 import uk.org.gigs2go.tableserver.core.data.TransferException;
 import uk.org.gigs2go.tableserver.core.test.TestUtils;
 
-
 /**
  * @author tim
  * 
@@ -44,8 +43,8 @@ public class XMLTransferDataServiceTest extends AbstractJUnit4SpringContextTests
     private DataServiceFactory serviceFactory;
 
     @Test
-    public void testSchemaInput() {
-        InputStream inputStream = testUtils.getInputStream("TestSchema.xml");
+    public void testSchema0Input() {
+        InputStream inputStream = testUtils.getInputStream("TestSchema0.xml");
         assertNotNull(inputStream);
         Schema schema = null;
         TransferDataService xmlDataService = serviceFactory.getTransferServices().get("xml");
@@ -65,7 +64,28 @@ public class XMLTransferDataServiceTest extends AbstractJUnit4SpringContextTests
     }
 
     @Test
-    public void testDataInput() {
+    public void testSchema1Input() {
+        InputStream inputStream = testUtils.getInputStream("TestSchema1.xml");
+        assertNotNull(inputStream);
+        Schema schema = null;
+        TransferDataService xmlDataService = serviceFactory.getTransferServices().get("xml");
+        assertNotNull(xmlDataService);
+        try {
+            schema = xmlDataService.getSchema(inputStream);
+        } catch (TransferException e) {
+            fail("Exception thrown");
+        }
+        assertNotNull(schema);
+        assertEquals("SchemaOne", schema.getName());
+
+        List<Column> schemaColumns = schema.getColumns().getColumn();
+        assertNotNull(schemaColumns);
+        assertEquals(15, schemaColumns.size());
+
+    }
+
+    @Test
+    public void testData0Input() {
         InputStream inputStream = testUtils.getInputStream("TestData0.xml");
         assertNotNull(inputStream);
         Table table = null;
@@ -80,6 +100,25 @@ public class XMLTransferDataServiceTest extends AbstractJUnit4SpringContextTests
         log.debug("{}", table.toString());
         assertEquals("SchemaName", table.getSchemaName());
         assertEquals("FileName", table.getName());
+
+    }
+
+    @Test
+    public void testData1Input() {
+        InputStream inputStream = testUtils.getInputStream("TestData1.xml");
+        assertNotNull(inputStream);
+        Table table = null;
+        TransferDataService xmlDataService = serviceFactory.getTransferServices().get("xml");
+        assertNotNull(xmlDataService);
+        try {
+            table = xmlDataService.getData(inputStream);
+        } catch (TransferException e) {
+            fail("Exception thrown");
+        }
+        assertNotNull(table);
+        log.debug("{}", table.toString());
+        assertEquals("SchemaOne", table.getSchemaName());
+        assertEquals("CountryFile", table.getName());
 
     }
 

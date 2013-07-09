@@ -5,7 +5,6 @@
 // Generated on: 2013.06.23 at 08:56:30 AM BST 
 //
 
-
 package uk.org.gigs2go.tableserver.core.data;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,32 +12,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
  * <p>Java class for ColumnValue complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="ColumnValue">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ColumnValue", propOrder = {
-    "name",
-    "value"
-})
+@XmlType(name = "ColumnValue", propOrder = { "name", "value" })
 public class ColumnValue {
 
     @XmlElement(required = true)
@@ -92,6 +70,14 @@ public class ColumnValue {
      */
     public void setValue(String value) {
         this.value = value;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "ColumnValue [name=" + this.name + ", value=" + this.value + "]";
     }
 
 }

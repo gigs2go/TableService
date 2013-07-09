@@ -12,6 +12,7 @@ import com.mongodb.DBObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,15 +139,36 @@ public class MongoStorageDataServiceImpl implements StorageDataService {
         for (Row row : table.getRows().getRow()) {
             doc = new HashMap<String, Object>();
             for (ColumnValue value : row.getColumnvalue()) {
-                Column column = columns.get(value.getName());
+                log.debug("Got {}", value);
+                Column column = columns.get(value.getName().trim());
+                log.debug("Got {}", column);
                 ColumnDataType type = column.getDataType();
-                doc.put(value.getName(), type.convert((String) value.getValue()));
+                doc.put(value.getName().trim(), getDBValue(type, value.getValue().trim()));
             }
             dbObject = new BasicDBObject(doc);
             dbCollection.save(dbObject);
         }
 
         log.debug("Got {}", result);
+        return result;
+    }
+
+    public Object getDBValue(ColumnDataType type, String value) {
+        Object result = type.convert((String) value);
+
+        if (result != null) {
+            switch (type) {
+                case DATE:
+                case DATETIME:
+                case YEAR:
+                    result = ((LocalDate) result).toDate();
+                    break;
+                default:
+                    break;
+
+            }
+        }
+
         return result;
     }
 
