@@ -26,13 +26,12 @@ import uk.org.gigs2go.tableserver.core.data.ColumnType;
 import uk.org.gigs2go.tableserver.core.data.JaxbUtils;
 import uk.org.gigs2go.tableserver.core.data.Row;
 import uk.org.gigs2go.tableserver.core.data.Schema;
+import uk.org.gigs2go.tableserver.core.data.Schema.Columns;
 import uk.org.gigs2go.tableserver.core.data.SchemaType;
 import uk.org.gigs2go.tableserver.core.data.Table;
-import uk.org.gigs2go.tableserver.core.data.TransferException;
-import uk.org.gigs2go.tableserver.core.data.Schema.Columns;
 import uk.org.gigs2go.tableserver.core.data.Table.Rows;
+import uk.org.gigs2go.tableserver.core.data.TransferException;
 import uk.org.gigs2go.tableserver.core.test.TestUtils;
-
 
 /**
  * @author tim
@@ -65,7 +64,7 @@ public class XMLDataTest extends AbstractJUnit4SpringContextTests {
 
     @Test
     public void testGetSchema() {
-        InputStream inputStream = testUtils.getInputStream("TestSchema.xml");
+        InputStream inputStream = testUtils.getInputStream("TestSchema0.xml");
         assertNotNull(inputStream);
         Schema schema = null;
         try {

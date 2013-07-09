@@ -78,6 +78,8 @@ public class MongoStorageDataServiceImpl implements StorageDataService {
         log.debug("Created DBObject : {}", dbObject.toString());
         DBCollection dbCollection = db.getCollection(Schema.COLLECTION);
         dbCollection.save(dbObject);
+        result.setSuccess(Result.SUCCESS);
+        result.setSchemaname(schema.getName());
         return result;
     }
 
@@ -149,6 +151,8 @@ public class MongoStorageDataServiceImpl implements StorageDataService {
             dbCollection.save(dbObject);
         }
 
+        result.setSuccess(Result.SUCCESS);
+        result.setSchemaname(schema.getName());
         log.debug("Got {}", result);
         return result;
     }
