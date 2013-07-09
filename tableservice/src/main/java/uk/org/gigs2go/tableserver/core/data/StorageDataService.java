@@ -3,6 +3,7 @@
  */
 package uk.org.gigs2go.tableserver.core.data;
 
+import java.util.Map;
 
 /**
  * @author tim
@@ -14,4 +15,8 @@ public interface StorageDataService {
     Schema loadSchema(String schemaref) throws StorageException;
 
     Result addData(Schema schema, Table table) throws StorageException;
+
+    Map<String, Object> getResults(Query query) throws StorageException;
+
+    String getAggregation(AggregationType aggregation) throws StorageException;
 }

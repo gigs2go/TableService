@@ -1,9 +1,11 @@
 package uk.org.gigs2go.tableserver.core.model.services;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.io.InputStream;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,8 +17,10 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import uk.org.gigs2go.tableserver.core.data.AggregationType;
 import uk.org.gigs2go.tableserver.core.data.DataServiceFactory;
 import uk.org.gigs2go.tableserver.core.data.JaxbUtils;
+import uk.org.gigs2go.tableserver.core.data.Query;
 import uk.org.gigs2go.tableserver.core.data.Schema;
 import uk.org.gigs2go.tableserver.core.data.SchemaType;
 import uk.org.gigs2go.tableserver.core.data.StorageDataService;
@@ -24,7 +28,6 @@ import uk.org.gigs2go.tableserver.core.data.StorageException;
 import uk.org.gigs2go.tableserver.core.data.Table;
 import uk.org.gigs2go.tableserver.core.data.TransferException;
 import uk.org.gigs2go.tableserver.core.test.TestUtils;
-
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath*:config/repo.xml", "classpath*:config/mvc.xml", "classpath*:config/security.xml" })
@@ -106,20 +109,23 @@ public class MongoStorageDataServiceTest extends AbstractJUnit4SpringContextTest
 
     }
 
-    //    @Test
-    //    public void testGetChartItems2() {
-    //        StorageDataService storageDataService = factory.getStorageServices().get("mongo");
-    //
-    //        String collectionName = "FileData_21";
-    //        String dimension = "Continent";
-    //        String dimensionValue = "North America";
-    //        String dimension2 = "Code";
-    //        String measure = "LifeExpectancy";
-    //        String aggregation = "avg";
+    @Test
+    public void testGetChartItems2() {
+        StorageDataService storageDataService = factory.getStorageServices().get("mongo");
 
-    //        List<ChartItem> items = dataService.getChartItems ( collectionName, dimension, dimensionValue, dimension2, measure, aggregation );
-    //        assertNotNull( items );
-    //        assertEquals( 99, items.size());
-    //    }
+        Query query = new Query();
+        query.setCollectionName("FileName");
+        query.setDimension("Continent");
+        query.setMeasure("LifeExpectancy");
+        query.setAggregation(AggregationType.AVG);
+        Map<String, Object> items = null;
+        try {
+            items = storageDataService.getResults(query);
+        } catch (StorageException e) {
+            fail();
+        }
+        assertNotNull(items);
+        assertEquals(1, items.size());
+    }
 
 }

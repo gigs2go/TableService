@@ -3,6 +3,7 @@
  */
 package uk.org.gigs2go.tableserver.core.services.storage;
 
+import com.mongodb.AggregationOutput;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -17,20 +18,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
+import uk.org.gigs2go.tableserver.core.data.AggregationType;
 import uk.org.gigs2go.tableserver.core.data.Column;
 import uk.org.gigs2go.tableserver.core.data.ColumnDataType;
 import uk.org.gigs2go.tableserver.core.data.ColumnType;
 import uk.org.gigs2go.tableserver.core.data.ColumnValue;
+import uk.org.gigs2go.tableserver.core.data.Query;
 import uk.org.gigs2go.tableserver.core.data.Result;
 import uk.org.gigs2go.tableserver.core.data.Row;
 import uk.org.gigs2go.tableserver.core.data.Schema;
+import uk.org.gigs2go.tableserver.core.data.Schema.Columns;
 import uk.org.gigs2go.tableserver.core.data.StorageDataService;
 import uk.org.gigs2go.tableserver.core.data.StorageException;
 import uk.org.gigs2go.tableserver.core.data.Table;
-import uk.org.gigs2go.tableserver.core.data.Schema.Columns;
-
-
-//import uk.org.gigs2go.tableserver.core.data.jaxb.Row;
 
 /**
  * @author tim
@@ -42,9 +42,6 @@ public class MongoStorageDataServiceImpl implements StorageDataService {
 
     @Autowired
     MongoTemplate mongoTemplate;
-
-    // @Autowired
-    // MongoDocumentRepository documentRepo;
 
     public MongoStorageDataServiceImpl() {
         // TODO Auto-generated constructor stub
@@ -132,20 +129,27 @@ public class MongoStorageDataServiceImpl implements StorageDataService {
         DB db = mongoTemplate.getDb();
         log.debug("Adding data to collection {}", table.getName());
         DBCollection dbCollection = db.getCollection(table.getName());
+
+        // Map the data collection to the schema
+        DBObject dbObject = new BasicDBObject("schemaName", schema.getName());
+        dbCollection.save(dbObject);
         // Map the data to the schema
-        Map<String, Object> doc = new HashMap<String, Object>();
+        Map<String, Object> doc = null;
         for (Row row : table.getRows().getRow()) {
+            doc = new HashMap<String, Object>();
             for (ColumnValue value : row.getColumnvalue()) {
                 Column column = columns.get(value.getName());
                 ColumnDataType type = column.getDataType();
                 doc.put(value.getName(), type.convert((String) value.getValue()));
             }
+            dbObject = new BasicDBObject(doc);
+            dbCollection.save(dbObject);
         }
 
-        DBObject dbObject = new BasicDBObject(doc);
-        dbCollection.save(dbObject);
+        log.debug("Got {}", result);
         return result;
     }
+
     /*
      * Dimension 
      * Measure 
@@ -157,29 +161,31 @@ public class MongoStorageDataServiceImpl implements StorageDataService {
      * 
      * db.<Table>.aggregate( [ { $group: { _id: "$<Dimension2>", <Aggregation><Measure>: { $<Aggregation>: "$<Measure>" } } } ] )
      */
-    //    @Override
-    //    public List<ChartItem> getChartItems(String collectionName, String dimension, String measure, String aggregation) {
-    //        final List<ChartItem> result = new ArrayList<ChartItem>();
-    //        log.debug("Getting data for collection {}", collectionName);
-    //        DBCollection collection = mongoTemplate.getDb().getCollection(collectionName);
-    //        DBObject group = new BasicDBObject("$group", new BasicDBObject("_id", "$" + dimension).append(aggregation + measure, new BasicDBObject("$" + aggregation, "$" + measure)));
-    //        DBObject sort = new BasicDBObject("$sort", new BasicDBObject("_id", 1));
-    //        log.debug("Group : {}", group);
-    //        AggregationOutput output = collection.aggregate(group, sort);
-    //        for (DBObject resultObject : output.results()) {
-    //            ChartItem item = new ChartItem();
-    //            item.setName((String) resultObject.get("_id"));
-    //            Object value = resultObject.get(aggregation + measure);
-    //            if (value == null) {
-    //                value = "null";
-    //            }
-    //            item.setValue(value.toString());
-    //            log.debug("Adding item {}", item);
-    //            result.add(item);
-    //            log.debug("Got {}", item);
-    //        }
-    //        return result;
-    //    }
+    @Override
+    public Map<String, Object> getResults(Query query) throws StorageException {
+        final Map<String, Object> result = new HashMap<String, Object>();
+        String collectionName = query.getCollectionName();
+        String dimension = query.getDimension();
+        String measure = query.getMeasure();
+        String aggregation = getAggregation(query.getAggregation());
+        log.debug("Getting data for collection {}", collectionName);
+        DBCollection collection = mongoTemplate.getDb().getCollection(collectionName);
+        DBObject group = new BasicDBObject("$group", new BasicDBObject("_id", "$" + dimension).append(aggregation + measure, new BasicDBObject("$" + aggregation, "$" + measure)));
+        DBObject sort = new BasicDBObject("$sort", new BasicDBObject("_id", 1));
+        log.debug("Group : {}", group);
+        AggregationOutput output = collection.aggregate(group, sort);
+        for (DBObject resultObject : output.results()) {
+            String name = (String) resultObject.get("_id");
+            Object value = resultObject.get(aggregation + measure);
+            if (value == null) {
+                value = "null";
+            }
+            log.debug("Adding datapoint {} : {}", name, value);
+            result.put(name, value);
+        }
+        return result;
+    }
+
     //
     //    /*
     //     * Dimension 
@@ -225,4 +231,35 @@ public class MongoStorageDataServiceImpl implements StorageDataService {
     //        return result;
     //    }
     //
+
+    /* (non-Javadoc)
+     * @see uk.org.gigs2go.tableserver.core.data.StorageDataService#getAggregation(uk.org.gigs2go.tableserver.core.data.AggregationType)
+     */
+    @Override
+    public String getAggregation(AggregationType aggregation) throws StorageException {
+        String result = null;
+        switch (aggregation) {
+            case COUNT:
+                result = "count";
+                break;
+            case AVG:
+                result = "avg";
+                break;
+            case MAX:
+                result = "max";
+                break;
+            case MIN:
+                result = "min";
+                break;
+            case SUM:
+                result = "sum";
+                break;
+            default:
+                Result error = new Result();
+                error.setSuccess(Result.FAIL);
+                error.getMessages().add("Unhandled Aggregation type " + aggregation.toString());
+                throw new StorageException(error);
+        }
+        return result;
+    }
 }
